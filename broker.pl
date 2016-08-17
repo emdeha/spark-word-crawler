@@ -51,7 +51,7 @@ while (my $sp = $spark_socket->accept()) {
 }
 
 while (my $cl = $client_socket->accept()) {
-  say 'got new client';
+  say 'got new client ' . $cl->peerport;
   push @threads, threads->create(sub {
     my $head;
     my $body;
