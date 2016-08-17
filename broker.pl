@@ -4,10 +4,12 @@ use strict;
 use warnings;
 use v5.014;
 
+use FindBin;
+use local::lib "$FindBin::Bin/local";
+
 use forks;
 
 use IO::Socket::INET;
-use FindBin;
 use Thread::Queue;
 
 my $q = Thread::Queue->new();
