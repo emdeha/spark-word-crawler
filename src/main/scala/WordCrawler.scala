@@ -11,8 +11,12 @@ object WordCrawler {
     val ssc = new StreamingContext(conf, Seconds(1))
 
     val lines = ssc.socketTextStream("localhost", 1337)
-    val wordCounts = lines.flatMap(_.split(" ")).map(word => (word, 1)).reduceByKey(_ + _)
-    wordCounts.print()
+    val meanWords = lines.flatMap(_.split(" ")).filter(word => word.length > 3)
+    val wordCounts = meanWords.map(word => (word, 1)).reduceByKey(_ + _)
+    wordCounts.foreachRDD(rdd => {
+      Console.println("\n\n--------\n")
+      rdd.sortBy(wc => wc._2, false).take(10).foreach(println)
+    })
 
     ssc.start()
     ssc.awaitTermination()
