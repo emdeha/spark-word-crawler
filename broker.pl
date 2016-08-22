@@ -59,10 +59,10 @@ while (my $cl = $client_socket->accept()) {
       chomp;
       if (!$head) {
         say 'read head';
-        $head = "$_\n";
+        $head = "$_";
       } elsif (!$body) {
         say 'read body';
-        $body = "$_\n";
+        $body = "$_";
         $has_read_all = 1;
       } else {
         warn "Head and body full but no has_read_all";
