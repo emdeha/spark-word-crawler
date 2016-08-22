@@ -40,8 +40,7 @@ while (my $sp = $spark_socket->accept()) {
   say 'got new spark client';
   $broker_thread = threads->create(sub {
     while (defined (my $data = $q->dequeue())) {
-      $sp->print($data->{head});
-      $sp->print($data->{body});
+      $sp->print($data->{head} . "," . $data->{body} . "\n");
       say 'sent data';
     }
 

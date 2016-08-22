@@ -10,6 +10,7 @@ use local::lib "$FindBin::Bin/local";
 use IO::Socket::INET;
 use WWW::Crawler::Lite;
 use HTML::TreeBuilder;
+use URI;
 
 my $sock = IO::Socket::INET->new(
   PeerAddr => 'localhost',
@@ -36,7 +37,10 @@ my $crawler; $crawler = WWW::Crawler::Lite->new(
     for my $p ($tree->find("p")) {
       $single_line .= join ' ', split "\n", $p->as_text;
     }
-    $sock->print("$url\n" . $single_line . "\n");
+    my $host = URI->new($url)->host;
+    my $line = "$host\n$single_line\n";
+    warn "Sending [" . substr($line, 0, 60) . "]";
+    $sock->print($line);
   },
   follow_ok => sub {
     my ($url) = @_;

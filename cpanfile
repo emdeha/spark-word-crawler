@@ -5,3 +5,4 @@ requires 'forks';
 requires 'local::lib';
 requires 'WWW::Crawler::Lite';
 requires 'HTML::TreeBuilder';
+requires 'URI';
