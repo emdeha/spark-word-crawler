@@ -41,7 +41,7 @@ while (my $sp = $spark_socket->accept()) {
   $broker_thread = threads->create(sub {
     while (defined (my $data = $q->dequeue())) {
       $sp->print("$data\n");
-      say 'sent data';
+      say "sent data";
     }
 
     $sp->close();
