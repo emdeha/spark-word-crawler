@@ -40,8 +40,8 @@ while (my $sp = $spark_socket->accept()) {
   say 'got new spark client';
   $broker_thread = threads->create(sub {
     while (defined (my $data = $q->dequeue())) {
-      $sp->print("$data\n");
-      say "sent data";
+      $sp->print($data->{head} . "," . $data->{body} . "\n");
+      say 'sent data';
     }
 
     $sp->close();
@@ -57,8 +57,24 @@ while (my $cl = $client_socket->accept()) {
     my $has_read_all = 0;
     while (<$cl>) {
       chomp;
-      say "data: [$_]";
-      $q->enqueue($_);
+      if (!$head) {
+        say 'read head';
+        $head = "$_";
+      } elsif (!$body) {
+        say 'read body';
+        $body = "$_";
+        $has_read_all = 1;
+      } else {
+        warn "Head and body full but no has_read_all";
+      }
+
+      if ($has_read_all) {
+        say "enqueue $head with $body";
+        $q->enqueue({ head => $head, body => $body });
+        $has_read_all = 0;
+        $head = undef;
+        $body = undef;
+      }
     }
 
     $cl->close();
