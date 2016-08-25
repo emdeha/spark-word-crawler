@@ -6,6 +6,10 @@ import org.apache.spark.streaming.dstream._
 import org.apache.spark.mllib.linalg.Vectors
 
 object WordCrawler {
+  def replaceEmpty(s: String): String = {
+    if (s.isEmpty) "0" else s
+  }
+
   def main(args: Array[String]) {
     val conf = new SparkConf().setMaster("local[2]").setAppName("WordCrawler")
     val ssc = new StreamingContext(conf, Seconds(1))
@@ -16,8 +20,10 @@ object WordCrawler {
       //       Parse as vector
       //       Specify time to train
       //       Use KMeans
-      val parsed = line.flatMap(_.split(",")) // .(Vectors.parse)
+      // val parsed = line.flatMap(_.split(",")).map(replaceEmpty(_))/* .fold("")(_ ++ "," ++ _) */.map(Vectors.parse)
+      val parsed = line.map(s => Vectors.dense(s.split(',').map(replaceEmpty(_)).map(_.toDouble))).cache()
       parsed.foreach(println)
+      println("--- batch done ---")
     })
 
     ssc.start()
