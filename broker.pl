@@ -40,6 +40,12 @@ while (my $sp = $spark_socket->accept()) {
   say 'got new spark client';
   $broker_thread = threads->create(sub {
     while (defined (my $data = $q->dequeue())) {
+      my $comma_count = () = $data =~ /,/g;
+      while ($comma_count > 10) {
+        say "chops data";
+        $data =~ s/,[^,]*$//;
+        $comma_count = () = $data =~ /,/g;
+      }
       $sp->print("$data\n");
       say "sent data";
     }

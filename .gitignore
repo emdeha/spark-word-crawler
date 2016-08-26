@@ -3,3 +3,4 @@ target/
 *.log
 cpanfile.snapshot
 local/
+train/
