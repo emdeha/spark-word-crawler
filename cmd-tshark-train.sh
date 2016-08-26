@@ -1,3 +1,4 @@
 #!/bin/bash
 
-./cmd-tshark.sh > trainData.csv
+./cmd-tshark.sh > train/trainData.txt
+chown emdeha:emdeha -R train
