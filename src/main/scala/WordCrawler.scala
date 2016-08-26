@@ -39,7 +39,7 @@ object WordCrawler {
       return
     }
 
-    val conf = new SparkConf().setMaster("local[2]").setAppName("WordCrawler")
+    val conf = new SparkConf().setMaster("local[4]").setAppName("WordCrawler")
     val model = new StreamingKMeans()
       .setK(3)
       .setDecayFactor(1.0)
@@ -54,6 +54,8 @@ object WordCrawler {
       .cache()
     model.trainOn(trainingData)
 
+    println("Set training")
+
     // Make predictions
     val (monitHost, monitPort) = toHostPort(args(1))
     val predLines = ssc.socketTextStream(monitHost, monitPort)
@@ -62,6 +64,8 @@ object WordCrawler {
       .cache()
 
     model.predictOn(predictionData).print()
+
+    println("Set prediction")
 
     ssc.start()
     ssc.awaitTermination()
